@@ -102,7 +102,7 @@ class JiraIngester:
             event_type="created",
             entity=entity,
             timestamp=issue.fields.updated,
-            actor=issue.fields.reporter.name if issue.fields.reporter else None,
+            actor=issue.fields.reporter.displayName if issue.fields.reporter else None,
             content=issue.fields.description or "",
             changes=changes,
             relationships=relationships,
@@ -110,7 +110,7 @@ class JiraIngester:
                 "key": issue.key,
                 "status": issue.fields.status.name if issue.fields.status else None,
                 "priority": issue.fields.priority.name if issue.fields.priority else None,
-                "assignee": issue.fields.assignee.name if issue.fields.assignee else None,
+                "assignee": issue.fields.assignee.displayName if issue.fields.assignee else None,
                 "labels": issue.fields.labels,
                 "components": [c.name for c in issue.fields.components] if issue.fields.components else [],
             },
@@ -145,7 +145,7 @@ class JiraIngester:
                     event_type="commented",
                     entity=entity,
                     timestamp=comment.updated,
-                    actor=comment.author.name if comment.author else None,
+                    actor=comment.author.displayName if comment.author else None,
                     content=comment.body,
                     relationships=relationships,
                 )
@@ -172,7 +172,7 @@ class JiraIngester:
             previous_state=item.fromString or "unknown",
             new_state=item.toString or "unknown",
             timestamp=history.created,
-            changed_by=history.author.name if history.author else None,
+            changed_by=history.author.displayName if history.author else None,
         )
 
         event = NormalizedEvent(
@@ -180,7 +180,7 @@ class JiraIngester:
             event_type="state_changed",
             entity=entity,
             timestamp=history.created,
-            actor=history.author.name if history.author else None,
+            actor=history.author.displayName if history.author else None,
             changes=[change],
         )
 

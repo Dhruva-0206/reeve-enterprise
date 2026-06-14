@@ -131,7 +131,8 @@ class DataOrchestrator:
         if not self.github_ingester:
             return {"status": "error", "message": "GitHub not configured"}
 
-        repos = repos or ["main"]
+        from config import github_config
+        repos = repos or github_config.repos or ["main"]
         events = []
         for repo in repos:
             events.extend(self.github_ingester.ingest_pull_requests(repo))
@@ -150,7 +151,8 @@ class DataOrchestrator:
         if not self.jira_ingester:
             return {"status": "error", "message": "Jira not configured"}
 
-        projects = projects or ["MAIN"]
+        from config import jira_config
+        projects = projects or jira_config.projects or ["MAIN"]
         events = []
         for project in projects:
             events.extend(self.jira_ingester.ingest_issues(project))
