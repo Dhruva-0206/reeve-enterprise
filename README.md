@@ -22,6 +22,12 @@ Instead of searching repositories, tickets, and conversations individually, engi
 
 ---
 
+# 🏗️ System Architecture
+
+![System Architecture](mermaid.jpeg)
+
+---
+
 # 🚀 What Makes Reeve Different?
 
 Most AI developer tools answer questions about code.
@@ -147,11 +153,6 @@ Which engineer discussions led to this implementation?
 
 ---
 
-# 🏗️ System Architecture
-
-![System Architecture](mermaid.jpeg)
-
----
 
 # 🛠 Technology Stack
 
