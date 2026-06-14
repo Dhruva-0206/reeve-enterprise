@@ -1,124 +1,345 @@
-# Reeve Enterprise: The AI Detective for Your Engineering Org 🕵️‍♂️
+# 🕵️ Reeve Enterprise
 
-**Reeve Enterprise** is a powerful AI intelligence console designed for **Root Cause Analysis (RCA)** and tracing the origination patterns of software issues. By fusing your organization's scattered data into a single temporal knowledge graph, it acts as an autonomous detective that traces bugs from their origination in a Jira ticket, through the GitHub pull request, all the way down to the exact lines of flawed logic in the raw source code.
+## The AI Detective for Engineering Organizations
 
----
+### Stop Searching. Start Investigating.
 
-## 🏆 What Makes Us Different?
+Modern engineering teams generate thousands of signals every week:
 
-Most "AI coding assistants" just chat with your codebase. **Reeve Enterprise does not just chat—it detects traces and uncovers origination patterns.**
+* Jira tickets
+* GitHub commits & pull requests
+* Slack discussions
+* Code reviews
+* Production incidents
 
-*   **Cross-Domain Intelligence**: It doesn't just read code. It reads your Jira tickets, GitHub PRs, and Slack conversations, understanding *why* code was written, not just *how*.
-*   **Automatic Pattern Recognition**: Our backend automatically wraps your natural language queries to force the AI to cross-reference bugs with source code. It finds the "DNA" of an issue across multiple platforms.
-*   **Temporal Knowledge Graph**: Powered by the Reeve SDK, it understands the *timeline* of events. It knows that a bug reported on Tuesday was caused by a PR merged on Monday, which was requested in a Jira ticket on Friday.
-*   **Zero Context Switching**: Everything is synthesized into a single, beautiful Intelligence Console. You don't need to open Jira, GitHub, and your IDE simultaneously anymore.
+When a critical bug appears, engineers waste hours jumping between tools trying to answer one question:
 
----
+> **"Where did this issue actually originate?"**
 
-## ✨ Key Features
+**Reeve Enterprise** transforms organizational knowledge into a unified temporal intelligence graph and autonomously performs Root Cause Analysis across your entire engineering ecosystem.
 
-*   **🧠 Multi-Source Ingestion**: Automatically pulls in data from **GitHub** (PRs, issues, commits, codebase), **Jira** (tickets, state changes), and **Slack** (conversations).
-*   **💻 Live Codebase Integration**: Fetches and stores the actual raw source code of your repositories directly from the GitHub API.
-*   **🔍 Investigative UI**: A beautifully designed frontend (`query_interface.html`) featuring a native File Browser and full Markdown rendering.
-*   **🕵️‍♂️ Origination Tracing**: Ask "Why does train_safeppo.py crash?" and watch it pull the exact Jira bug report and highlight the flawed Python logic in one unified answer.
+Instead of searching repositories, tickets, and conversations individually, engineers can investigate issues through a single AI-powered console that reconstructs the complete chain of events leading to a failure.
 
 ---
 
-## 🚀 Quick Start (Hackathon Guide)
+# 🚀 What Makes Reeve Different?
 
-### 1. Prerequisites
-*   Python 3.10+
-*   API keys for:
-    *   **Reeve**: https://mcp.reeve.co.in
-    *   **GitHub**: Personal access token
-    *   **Jira**: API token + account email
+Most AI developer tools answer questions about code.
 
-### 2. Installation
+**Reeve answers questions about causality.**
+
+It doesn't just understand what code exists.
+
+It understands:
+
+* Why it was written
+* Who requested it
+* Which ticket introduced it
+* Which discussion influenced it
+* Which commit changed it
+* Which PR merged it
+* How it ultimately caused a production issue
+
+By connecting organizational knowledge into a temporal graph, Reeve behaves like an AI investigator rather than a chatbot.
+
+---
+
+# 🧠 Core Innovation
+
+### Temporal Engineering Intelligence Graph
+
+Reeve continuously builds relationships between:
+
+```text
+Jira Ticket
+      ↓
+Slack Discussion
+      ↓
+GitHub Pull Request
+      ↓
+Commit History
+      ↓
+Source Code
+      ↓
+Production Bug
+```
+
+Unlike traditional RAG systems that retrieve isolated documents, Reeve reconstructs the entire lifecycle of engineering decisions.
+
+This allows the system to identify not only *where* a bug exists, but *how it evolved into existence*.
+
+---
+
+# ⚡ Key Capabilities
+
+## 🔍 Autonomous Root Cause Analysis
+
+Ask:
+
+> "Why does train_safeppo.py crash during evaluation?"
+
+Reeve automatically:
+
+* Finds related Jira tickets
+* Retrieves associated GitHub PRs
+* Analyzes commits that modified the file
+* Examines Slack discussions surrounding the change
+* Locates the exact code responsible
+* Produces a complete investigation report
+
+---
+
+## 🧩 Cross-Domain Correlation
+
+Most tools operate in silos.
+
+Reeve correlates evidence across:
+
+* GitHub
+* Jira
+* Slack
+* Source Code
+
+This enables true engineering intelligence rather than isolated search.
+
+---
+
+## 📈 Organizational Memory
+
+Engineering knowledge is often lost when people switch teams or leave companies.
+
+Reeve creates a persistent institutional memory that preserves:
+
+* Design decisions
+* Technical discussions
+* Incident histories
+* Feature evolution
+
+---
+
+## 💻 Live Repository Intelligence
+
+Reeve ingests:
+
+* Repositories
+* Pull Requests
+* Issues
+* Commits
+* Full Source Code
+
+allowing investigations down to individual functions and code blocks.
+
+---
+
+## 🎯 Natural Language Investigations
+
+Examples:
+
+```text
+Which open Jira bugs affect the PPO training pipeline?
+
+What code changes introduced the collision-rate regression?
+
+Show me all PRs related to Safe PPO reward shaping.
+
+Which engineer discussions led to this implementation?
+```
+
+---
+
+# 🏗️ System Architecture
+
+![System Architecture](mermaid.jpeg)
+
+---
+
+# 🛠 Technology Stack
+
+### Backend
+
+* FastAPI
+* Python
+* Reeve SDK
+* Async Processing
+
+### Data Sources
+
+* GitHub API
+* Jira API
+* Slack API
+
+### Intelligence Layer
+
+* Temporal Knowledge Graph
+* Cross-Domain Retrieval
+* Organizational Memory
+* RCA Agent
+
+### Frontend
+
+* Interactive Investigation Console
+* Markdown Rendering
+* Repository File Explorer
+* Source-Code Viewer
+
+---
+
+# ⚙️ Quick Start
+
+## Clone Repository
+
 ```bash
-# Clone/setup project
-git clone <your-repo>
+git clone <repo-url>
 cd reeve-enterprise
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Copy environment template
-cp .env.example .env
 ```
 
-### 3. Configure `.env`
-Edit `.env` with your credentials:
-```env
-REEVE_API_KEY=sk-your-key
-GITHUB_TOKEN=ghp_your-token
-GITHUB_OWNER=your-org
-GITHUB_REPOS=your-repo
+## Install Dependencies
 
-JIRA_URL=https://your-org.atlassian.net
-JIRA_USERNAME=email@company.com
-JIRA_API_TOKEN=your-token
-JIRA_PROJECTS=KAN
-```
-
-### 4. Start the Engine
-Start the backend FastAPI server:
 ```bash
-python -m uvicorn main:app --reload --port 8000
+pip install -r requirements.txt
 ```
-Open **`query_interface.html`** in your web browser to access the Intelligence Console!
+
+## Configure Environment
+
+```env
+REEVE_API_KEY=your_key
+
+GITHUB_TOKEN=your_token
+GITHUB_OWNER=your_org
+GITHUB_REPOS=repo1,repo2
+
+JIRA_URL=https://your-company.atlassian.net
+JIRA_USERNAME=your_email
+JIRA_API_TOKEN=your_token
+
+SLACK_BOT_TOKEN=xoxb-token
+```
+
+## Start Backend
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+## Launch Intelligence Console
+
+Open:
+
+```text
+query_interface.html
+```
 
 ---
 
-## 🛠️ Usage & Ingestion
+# 📥 Data Ingestion
 
-Before you can investigate, you need to ingest your organization's data into the Reeve knowledge graph. We provide a powerful CLI for this:
+### GitHub Metadata
 
 ```bash
-# 1. Ingest all GitHub Metadata (PRs, Issues, Commits)
 python cli.py ingest github
+```
 
-# 2. Ingest the raw Codebase (Files & Source Code)
+### Full Codebase
+
+```bash
 python cli.py ingest codebase
+```
 
-# 3. Ingest Jira Tickets
+### Jira Tickets
+
+```bash
 python cli.py ingest jira
 ```
 
-### Using the Intelligence Console
-Once ingested, simply open `query_interface.html`. 
+### Slack Conversations
 
-**1. Browse Files**: Click the "Browse Files" button in the sidebar to natively navigate your GitHub repository's file tree and view source code with syntax highlighting.
-**2. Trace Patterns**: Use the query bar to run RCA investigations:
-*   *"What are the open bugs in Jira right now, and which specific Python files in the codebase do they affect?"*
-*   *"Trace the origination pattern for the division by zero crash. Which Jira ticket tracks it, and what's the root cause in the code?"*
-
----
-
-## 🏗️ Architecture
-
-```mermaid
-graph LR
-    A[GitHub API] -->|Metadata & Code| D(Ingesters)
-    B[Jira API] -->|Tickets & States| D
-    C[Slack API] -->|Conversations| D
-    
-    D --> E[Data Normalizers]
-    E --> F[Reeve Memory Manager]
-    F -->|store_memory| G[(Reeve Temporal Graph)]
-    
-    H[Intelligence Console UI] -->|investigate| F
-    F -->|query_memory| G
+```bash
+python cli.py ingest slack
 ```
 
-1.  **Ingesters (`ingester_*.py`)**: Connect to external APIs (GitHub, Jira, Codebase) and extract raw data.
-2.  **Normalizers (`models.py`)**: Convert disparate data structures into a unified `NormalizedEvent` format.
-3.  **Reeve Memory Manager (`memory_manager.py`)**: Pushes normalized events to the Reeve Temporal Graph and enhances user queries to force cross-domain pattern matching.
-4.  **FastAPI Backend (`main.py`)**: Serves the REST API for the UI.
-5.  **Intelligence Console (`query_interface.html`)**: The frontend interface for engineers to conduct investigations.
+---
+
+# 🎬 Example Investigation
+
+### Query
+
+```text
+Why did the PPO safety agent start tailgating after Release v2.1?
+```
+
+### Reeve Investigation
+
+✔ Finds related Jira ticket
+
+✔ Retrieves linked PR
+
+✔ Identifies commit introducing reward-function change
+
+✔ Extracts Slack discussion about the modification
+
+✔ Highlights affected code region
+
+✔ Generates root-cause explanation
+
+### Result
+
+```text
+Issue Origin:
+JIRA-241
+
+Introduced By:
+PR #487
+
+Commit:
+d9a4f72
+
+Root Cause:
+Safety penalty weight reduced from 0.5 → 0.1,
+causing unsafe optimization behavior in dense traffic scenarios.
+```
 
 ---
 
-## 🔮 Future Roadmap
-*   **Real-time Webhooks**: Automatically ingest new Jira tickets and GitHub commits the second they happen.
-*   **Multi-tenant Support**: Allow multiple organizations to use the console securely.
-*   **Automated PR Generation**: Once an origination pattern is found, automatically draft a GitHub PR to fix the root cause.
+# 🏆 Hackathon Impact
+
+### Engineering teams spend hours finding causes.
+
+Reeve finds them in seconds.
+
+By transforming fragmented engineering data into a connected intelligence graph, Reeve enables:
+
+* Faster incident response
+* Reduced debugging time
+* Better organizational memory
+* Cross-team knowledge discovery
+* AI-powered engineering investigations
+
+---
+
+# 🔮 Future Roadmap
+
+### Real-Time Intelligence
+
+* GitHub Webhooks
+* Jira Event Streaming
+* Slack Event Subscriptions
+
+### Autonomous Engineering Agents
+
+* Automated Incident Investigations
+* PR Risk Assessment
+* Change Impact Analysis
+* AI-Generated Fix Suggestions
+
+### Enterprise Scale
+
+* Multi-Tenant Deployments
+* Role-Based Access Control
+* Audit Trails
+* Compliance Support
+
+---
+
+## Built with Reeve SDK
+
+**Reeve Enterprise turns organizational knowledge into engineering intelligence.**
