@@ -23,9 +23,11 @@ class GitHubIngester:
         events = []
         try:
             repo = self.client.get_user(self.owner).get_repo(repo_name)
-            prs = repo.get_pulls(state="all", sort="updated", direction="desc").get_list(limit)
+            prs = repo.get_pulls(state="all", sort="updated", direction="desc")
 
-            for pr in prs:
+            for i, pr in enumerate(prs):
+                if i >= limit:
+                    break
                 event = self._normalize_pr(repo_name, pr)
                 events.append(event)
         except Exception as e:
@@ -38,9 +40,11 @@ class GitHubIngester:
         events = []
         try:
             repo = self.client.get_user(self.owner).get_repo(repo_name)
-            issues = repo.get_issues(state="all", sort="updated", direction="desc").get_list(limit)
+            issues = repo.get_issues(state="all", sort="updated", direction="desc")
 
-            for issue in issues:
+            for i, issue in enumerate(issues):
+                if i >= limit:
+                    break
                 event = self._normalize_issue(repo_name, issue)
                 events.append(event)
         except Exception as e:
@@ -53,9 +57,11 @@ class GitHubIngester:
         events = []
         try:
             repo = self.client.get_user(self.owner).get_repo(repo_name)
-            commits = repo.get_commits().get_list(limit)
+            commits = repo.get_commits()
 
-            for commit in commits:
+            for i, commit in enumerate(commits):
+                if i >= limit:
+                    break
                 event = self._normalize_commit(repo_name, commit)
                 events.append(event)
         except Exception as e:
