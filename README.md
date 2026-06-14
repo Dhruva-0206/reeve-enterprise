@@ -340,6 +340,18 @@ By transforming fragmented engineering data into a connected intelligence graph,
 
 ---
 
+# 🧠 Reeve Long-Term Memory System
+
+Under the hood, Reeve powers this console using an advanced, **Episodic Knowledge Graph** backed by Neo4j and vector embeddings:
+
+*   **Neo4j Graph Schema**: Every ingested event is stored as an `Episode` node. These episodes are deeply connected to `Entity`, `Action`, `State`, `Relation`, `Role`, and `Location` nodes via a rich relationship schema.
+*   **Semantic Extraction (`operator.py`)**: An LLM acts as a Semantic Operator, extracting structured metadata (entities, actions, states, importance scores) from plain text into a strict schema.
+*   **Smart Entity Deduplication**: Uses a 3-layer entity resolution system (Exact Match ➡️ Substring Containment ➡️ Embedding Similarity ≥ 0.93) to ensure canonical entity mapping.
+*   **State Contradiction Management**: Maintains state history over time using a `SUPERSEDES` chain, resolving conflicting facts intelligently.
+*   **Intent-Routed Retrieval (`retriever.py`)**: When you ask a question, the engine routes your intent (e.g. fact lookup vs synthesis) and retrieves context using a blend of vector ANN similarity, importance scores, and temporal recency.
+
+---
+
 ## Built with Reeve SDK
 
 **Reeve Enterprise turns organizational knowledge into engineering intelligence.**
