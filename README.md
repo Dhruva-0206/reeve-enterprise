@@ -28,7 +28,7 @@ Instead of searching repositories, tickets, and conversations individually, engi
 
 ---
 
-# 🚀 What Makes Reeve Different?
+# What Makes Reeve Different?
 
 Most AI developer tools answer questions about code.
 
