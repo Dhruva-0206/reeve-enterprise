@@ -356,3 +356,5 @@ Under the hood, Reeve powers this console using an advanced, **Episodic Knowledg
 ## Built with Reeve SDK
 
 **Reeve Enterprise turns organizational knowledge into engineering intelligence.**
+
+Powered by the core temporal knowledge graph engine at [reeve.co.in](https://reeve.co.in/).
