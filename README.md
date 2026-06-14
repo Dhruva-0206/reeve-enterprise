@@ -149,7 +149,7 @@ Which engineer discussions led to this implementation?
 
 # 🏗️ System Architecture
 
-![System Architecture](flowchart/mermaid.jpeg)
+![System Architecture](https://github.com/Dhruva-0206/reeve-enterprise/edit/main/flowchart/mermaid.jpeg)
 
 ---
 
