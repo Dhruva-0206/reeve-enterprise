@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Intelligence — Reeve</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       REEVE DESIGN SYSTEM
+       Cream  #F0EDE6   Teal   #1A8A87
+       DkTeal #0C3533   Gold   #C9A227
+       Text   #1A1A1A   Muted  #7A7571
+       Border #DEDAD5
+    ============================================= */
+    :root {
+      --cream:      #F0EDE6;
+      --cream-mid:  #E8E3D9;
+      --cream-dark: #DDD8CE;
+      --teal:       #1A8A87;
+      --teal-light: #22A8A4;
+      --teal-dark:  #0C3533;
+      --teal-xd:    #081F1E;
+      --gold:       #C9A227;
+      --gold-light: #D4B03A;
+      --text:       #1A1A1A;
+      --muted:      #7A7571;
+      --border:     #DEDAD5;
+      --white:      #FFFFFF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ---- scrollbar ---- */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--teal); }
+
+    /* ===== CANVAS BG ===== */
+    #bg {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      opacity: 0.22;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 60px;
+      background: rgba(240,237,230,0.90);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 36px;
+    }
+
+    .nav-brand {
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text);
+    }
+    .nav-brand span { color: var(--teal); }
+
+    .nav-pill {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(26,138,135,0.06);
+      border: 1px solid rgba(26,138,135,0.18);
+      padding: 4px 14px;
+    }
+
+    .nav-right {
+      display: flex; align-items: center; gap: 20px;
+    }
+
+    .src-chip {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--cream-dark);
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    .dot.on {
+      background: var(--teal);
+      box-shadow: 0 0 7px rgba(26,138,135,0.6);
+      animation: blink-dot 2.5s ease-in-out infinite;
+    }
+    @keyframes blink-dot {
+      0%,100% { opacity:1; } 50% { opacity:.5; }
+    }
+
+    .sync-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 16px;
+      background: var(--teal); color: var(--white);
+      border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .sync-btn:hover { background: var(--teal-light); transform: translateY(-1px); }
+    .sync-btn:active { transform: translateY(0); }
+    .sync-btn.busy { opacity: 0.65; cursor: not-allowed; }
+    .sync-btn svg { flex-shrink: 0; }
+
+    /* ===== LAYOUT ===== */
+    .shell {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 60px;
+      position: relative; z-index: 1;
+    }
+
+    /* ===== SIDEBAR ===== */
+    aside {
+      width: 268px; flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      height: calc(100vh - 60px);
+      position: sticky; top: 60px;
+      overflow: hidden;
+    }
+
+    .sb-block { padding: 22px 22px 0; }
+
+    .sb-label {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+
+    .qa-list { display: flex; flex-direction: column; gap: 2px; }
+    .qa-btn {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 10px; border: none; background: transparent;
+      text-align: left; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px; color: var(--text);
+      transition: all 0.15s; border-radius: 2px;
+    }
+    .qa-btn:hover {
+      background: rgba(26,138,135,0.07);
+      color: var(--teal); padding-left: 14px;
+    }
+    .qa-ico { font-size: 13px; flex-shrink: 0; }
+
+    .sb-div { height: 1px; background: var(--border); margin: 18px 22px; }
+
+    .hist-wrap {
+      flex: 1; overflow-y: auto;
+      padding: 0 22px 16px;
+    }
+    .hist-item {
+      padding: 7px 10px; cursor: pointer;
+      font-size: 11.5px; color: var(--muted);
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .hist-item:hover {
+      color: var(--text); border-left-color: var(--teal);
+      background: rgba(26,138,135,0.05);
+    }
+
+    /* source status panel */
+    .src-panel {
+      padding: 14px 22px;
+      border-top: 1px solid var(--border);
+      background: rgba(26,138,135,0.025);
+    }
+    .src-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 5px 0;
+    }
+    .src-name {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500;
+    }
+    .src-ico {
+      width: 18px; height: 18px; border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; color: white;
+    }
+    .gh-bg  { background: #24292F; }
+    .jr-bg  { background: #0052CC; }
+    .sl-bg  { background: #611f69; }
+    .src-st {
+      font-size: 10px; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .src-st.ok { color: var(--teal); }
+
+    /* ===== MAIN ===== */
+    main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 52px 56px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-eye {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 14px;
+    }
+    .hero-h {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(34px, 3.5vw, 50px);
+      font-weight: 500; line-height: 1.15;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .hero-h em { font-style: italic; color: var(--teal); }
+    .hero-sub {
+      font-size: 14px; color: var(--muted);
+      max-width: 460px; line-height: 1.75;
+    }
+
+    /* ===== QUERY AREA ===== */
+    .q-area { padding: 36px 56px 20px; }
+
+    .q-wrap { position: relative; margin-bottom: 14px; }
+    .q-input {
+      width: 100%; padding: 18px 56px 18px 22px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; color: var(--text);
+      outline: none; resize: none;
+      min-height: 76px; line-height: 1.65;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .q-input::placeholder { color: #B8B3AA; }
+    .q-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(26,138,135,0.09);
+    }
+
+    .q-send {
+      position: absolute; right: 14px; bottom: 14px;
+      width: 34px; height: 34px;
+      background: var(--teal); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .q-send:hover { background: var(--teal-light); transform: scale(1.05); }
+    .q-send svg { stroke: white; fill: none; stroke-width: 2;
+                  stroke-linecap: round; stroke-linejoin: round; }
+
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px;
+    }
+    .chip {
+      padding: 5px 13px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px; color: var(--muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .chip:hover { border-color: var(--teal); color: var(--teal); background: rgba(26,138,135,0.04); }
+
+    .kb-hint {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; color: #A8A39A; margin-top: 6px;
+    }
+    .kbd {
+      padding: 1px 6px;
+      border: 1px solid var(--border);
+      background: var(--cream-mid);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      border-radius: 2px;
+    }
+
+    /* ===== RESULT ===== */
+    .r-area { padding: 0 56px 56px; flex: 1; }
+
+    /* empty state */
+    .empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 70px 40px; text-align: center;
+    }
+    .empty svg { margin-bottom: 28px; }
+    .empty-h {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 500;
+      color: var(--text); margin-bottom: 10px;
+    }
+    .empty-h em { color: var(--teal); font-style: italic; }
+    .empty-p { font-size: 13px; color: var(--muted); max-width: 320px; line-height: 1.7; }
+
+    /* result card */
+    .r-card {
+      border: 1px solid var(--border);
+      background: var(--white);
+      display: none;
+    }
+
+    .r-head {
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .r-tag {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--teal);
+    }
+    .r-meta { display: flex; align-items: center; gap: 14px; }
+    .r-ms {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--muted);
+    }
+    .copy-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 10px;
+      border: 1px solid var(--border); background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; transition: all 0.15s;
+    }
+    .copy-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+    .r-body { padding: 26px 22px; }
+
+    .r-q {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px; font-style: italic;
+      color: var(--text); margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* loading */
+    .r-loading { display: none; margin-bottom: 20px; }
+    .loading-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .l-dots { display: flex; gap: 7px; }
+    .l-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--teal);
+      animation: pop 1.3s ease-in-out infinite;
+    }
+    .l-dot:nth-child(2) { animation-delay: .2s; background: var(--gold); }
+    .l-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes pop {
+      0%,80%,100% { transform: scale(.55); opacity:.35; }
+      40%          { transform: scale(1);   opacity: 1; }
+    }
+    .l-lbl { font-size: 12.5px; color: var(--muted); }
+    .skel { width: 100%; }
+    .skel-ln {
+      height: 13px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--cream-mid) 25%, var(--cream) 50%, var(--cream-mid) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      margin-bottom: 9px;
+    }
+    .skel-ln:nth-child(2) { width:88%; }
+    .skel-ln:nth-child(3) { width:94%; }
+    .skel-ln:nth-child(4) { width:72%; }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    /* answer */
+    .r-ans {
+      font-size: 14.5px; line-height: 1.85;
+      color: var(--text); white-space: pre-wrap;
+    }
+    .tcursor {
+      display: inline-block; width: 2px; height: 15px;
+      background: var(--teal); margin-left: 2px;
+      animation: blink-c 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink-c { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+    /* source badges */
+    .badges { display: none; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+    .badge {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 11px; border: 1px solid;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .b-gh { border-color: #24292F; color: #24292F; }
+    .b-jr { border-color: #0052CC; color: #0052CC; }
+    .b-sl { border-color: #611f69; color: #611f69; }
+    .badge svg { width: 11px; height: 11px; fill: currentColor; }
+
+    /* ===== MARQUEE ===== */
+    .marquee-wrap {
+      background: var(--teal-dark);
+      overflow: hidden; white-space: nowrap;
+      padding: 11px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .marquee-inner {
+      display: inline-block;
+      animation: mq 35s linear infinite;
+    }
+    .mi {
+      display: inline-block;
+      font-size: 9.5px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45); padding: 0 24px;
+    }
+    .mi .s { color: var(--teal-light); margin-left: 24px; }
+    @keyframes mq {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ===== STATS ===== */
+    .stats {
+      background: var(--teal-xd);
+      display: grid; grid-template-columns: repeat(4,1fr);
+      padding: 30px 56px;
+    }
+    .stat {
+      padding: 0 28px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+    }
+    .stat:first-child { padding-left: 0; }
+    .stat:last-child  { border-right: none; }
+    .stat-n {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; font-weight: 500;
+      color: var(--white); display: block;
+      line-height: 1.1;
+    }
+    .stat-n.t { color: var(--teal-light); }
+    .stat-n.g { color: var(--gold-light); }
+    .stat-lbl {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); display: block; margin-top: 5px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--teal-dark);
+      padding: 18px 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .ft-l {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+    .ft-r {
+      font-size: 11px; color: rgba(255,255,255,0.3);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ft-r a { color: var(--teal-light); text-decoration: none; }
+    .ft-r a:hover { text-decoration: underline; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: var(--teal-dark); color: var(--white);
+      padding: 11px 18px; font-size: 12.5px;
+      z-index: 9999; border-left: 3px solid var(--teal);
+      transform: translateY(20px); opacity: 0;
+      transition: all 0.3s; pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-brand">REEVE <span>/ ENTERPRISE</span></div>
+    <div class="nav-pill">Intelligence Console</div>
+    <div class="nav-right">
+      <div class="src-chip"><div class="dot" id="d-gh"></div>GH</div>
+      <div class="src-chip"><div class="dot" id="d-jr"></div>JR</div>
+      <div class="src-chip"><div class="dot" id="d-sl"></div>SL</div>
+      <button class="sync-btn" id="sync-btn" onclick="triggerSync()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/>
+        </svg>
+        SYNC ALL
+      </button>
+    </div>
+  </nav>
+
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <aside>
+      <div class="sb-block" style="margin-top:20px">
+        <div class="sb-label">Quick Queries</div>
+        <div class="qa-list">
+          <button class="qa-btn" onclick="setQ('What GitHub pull requests exist?')"><span class="qa-ico">◎</span>All pull requests</button>
+          <button class="qa-btn" onclick="setQ('What are the Jira tickets in KAN?')"><span class="qa-ico">◎</span>Jira tickets</button>
+          <button class="qa-btn" onclick="setQ('What commits were made recently?')"><span class="qa-ico">◎</span>Recent commits</button>
+          <button class="qa-btn" onclick="setQ('Show me all merged pull requests')"><span class="qa-ico">◎</span>Merged PRs</button>
+          <button class="qa-btn" onclick="setQ('Who made the most recent change?')"><span class="qa-ico">◎</span>Last contributor</button>
+          <button class="qa-btn" onclick="setQ('What issues are currently open?')"><span class="qa-ico">◎</span>Open issues</button>
+          <button class="qa-btn" onclick="setQ('What Jira issues are in progress?')"><span class="qa-ico">◎</span>In-progress tickets</button>
+          <button class="qa-btn" onclick="setQ('Show me all state changes tracked')"><span class="qa-ico">◎</span>State changes</button>
+          <button class="qa-btn" onclick="setQ('What decisions were made in this project?')"><span class="qa-ico">◎</span>Key decisions</button>
+        </div>
+      </div>
+
+      <div class="sb-div"></div>
+
+      <div class="sb-block">
+        <div class="sb-label">History</div>
+      </div>
+      <div class="hist-wrap">
+        <div id="hist-list">
+          <div style="font-size:11.5px;color:var(--muted);padding:6px 10px">No queries yet</div>
+        </div>
+      </div>
+
+      <div class="src-panel">
+        <div class="sb-label" style="margin-bottom:8px">Data Sources</div>
+        <div class="src-row">
+          <div class="src-name">
+            <div class="src-ico gh-bg">GH</div>GitHub
+          </div>
+          <div class="src-st" id="st-gh">—</div>
+        </div>
+        <div class="src-row">
+          <div class="src-name">
+            <div class="src-ico jr-bg">JR</div>Jira
+          </div>
+          <div class="src-st" id="st-jr">—</div>
+        </div>
+        <div class="src-row">
+          <div class="src-name">
+            <div class="src-ico sl-bg">SL</div>Slack
+          </div>
+          <div class="src-st" id="st-sl">—</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eye">/ Enterprise Knowledge Investigation</div>
+        <h1 class="hero-h">
+          Ask anything,<br><em>find everything.</em>
+        </h1>
+        <p class="hero-sub">
+          Query your engineering knowledge graph. Trace decisions across GitHub, Jira, and Slack — powered by Reeve's temporal memory.
+        </p>
+      </div>
+
+      <!-- QUERY -->
+      <div class="q-area">
+        <div class="q-wrap">
+          <textarea
+            id="q-input"
+            class="q-input"
+            placeholder="Ask anything — 'What PRs were merged?' · 'Why did this ticket close?' · 'Who reviewed the auth changes?'"
+            rows="3"
+          ></textarea>
+          <button class="q-send" onclick="submitQuery()">
+            <svg width="15" height="15" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="chips">
+          <button class="chip" onclick="setQ('What GitHub pull requests exist?')">GitHub PRs</button>
+          <button class="chip" onclick="setQ('What are the Jira tickets in KAN?')">Jira tickets</button>
+          <button class="chip" onclick="setQ('What commits were made recently?')">Recent commits</button>
+          <button class="chip" onclick="setQ('Who merged the last PR?')">Last merge</button>
+          <button class="chip" onclick="setQ('What issues are open?')">Open issues</button>
+          <button class="chip" onclick="setQ('Show me all state changes tracked')">State changes</button>
+          <button class="chip" onclick="setQ('What work is in progress?')">In progress</button>
+          <button class="chip" onclick="setQ('What decisions were made in this project?')">Decisions</button>
+        </div>
+        <div class="kb-hint">
+          Press <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> to query &nbsp;·&nbsp; <span class="kbd">Esc</span> to clear
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="r-area">
+        <!-- Empty state -->
+        <div class="empty" id="empty">
+          <svg width="130" height="90" viewBox="0 0 130 90" fill="none">
+            <circle cx="65" cy="45" r="12" fill="#1A8A87" opacity=".85"/>
+            <circle cx="18" cy="18" r="7"  fill="#C9A227" opacity=".6"/>
+            <circle cx="112" cy="18" r="8"  fill="#1A8A87" opacity=".4"/>
+            <circle cx="12" cy="72" r="5"  fill="#BBBBBB" opacity=".55"/>
+            <circle cx="118" cy="72" r="7"  fill="#1A8A87" opacity=".45"/>
+            <circle cx="52" cy="8"  r="4"  fill="#BBBBBB" opacity=".4"/>
+            <circle cx="90" cy="82" r="5"  fill="#C9A227" opacity=".5"/>
+            <line x1="65" y1="45" x2="18"  y2="18"  stroke="#DEDAD5" stroke-width="1.4"/>
+            <line x1="65" y1="45" x2="112" y2="18"  stroke="#DEDAD5" stroke-width="1.4"/>
+            <line x1="65" y1="45" x2="12"  y2="72"  stroke="#DEDAD5" stroke-width="1.4"/>
+            <line x1="65" y1="45" x2="118" y2="72"  stroke="#DEDAD5" stroke-width="1.4"/>
+            <line x1="18"  y1="18" x2="52"  y2="8"   stroke="#DEDAD5" stroke-width="1"/>
+            <line x1="118" y1="72" x2="90"  y2="82"  stroke="#DEDAD5" stroke-width="1"/>
+          </svg>
+          <div class="empty-h">Query the <em>knowledge graph.</em></div>
+          <p class="empty-p">Your engineering events are stored as a temporal knowledge graph. Ask anything — PR status, Jira decisions, cross-system traces.</p>
+        </div>
+
+        <!-- Result card -->
+        <div class="r-card" id="r-card">
+          <div class="r-head">
+            <div class="r-tag">/ Investigation Result</div>
+            <div class="r-meta">
+              <span class="r-ms" id="r-ms"></span>
+              <button class="copy-btn" onclick="copyAns()">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                COPY
+              </button>
+            </div>
+          </div>
+          <div class="r-body">
+            <div class="r-q" id="r-q-text"></div>
+
+            <div class="r-loading" id="r-loading">
+              <div class="loading-row">
+                <div class="l-dots">
+                  <div class="l-dot"></div>
+                  <div class="l-dot"></div>
+                  <div class="l-dot"></div>
+                </div>
+                <span class="l-lbl" id="l-lbl">Traversing knowledge graph…</span>
+              </div>
+              <div class="skel">
+                <div class="skel-ln"></div>
+                <div class="skel-ln"></div>
+                <div class="skel-ln"></div>
+                <div class="skel-ln"></div>
+              </div>
+            </div>
+
+            <div class="r-ans" id="r-ans"></div>
+            <div class="badges" id="badges"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-inner" id="mq">
+      <span class="mi">TEMPORAL KNOWLEDGE GRAPH<span class="s">/</span></span>
+      <span class="mi">ENTITY RESOLUTION<span class="s">/</span></span>
+      <span class="mi">STATE SUPERSESSION<span class="s">/</span></span>
+      <span class="mi">3-LANE RETRIEVAL<span class="s">/</span></span>
+      <span class="mi">GITHUB INTEGRATION<span class="s">/</span></span>
+      <span class="mi">JIRA INTEGRATION<span class="s">/</span></span>
+      <span class="mi">SLACK INTEGRATION<span class="s">/</span></span>
+      <span class="mi">CAUSAL TRACING<span class="s">/</span></span>
+      <span class="mi">MCP PROTOCOL<span class="s">/</span></span>
+      <span class="mi">DECISION INTELLIGENCE<span class="s">/</span></span>
+      <span class="mi">LIFESPAN-AWARE SCALING<span class="s">/</span></span>
+      <span class="mi">LANDMARK MEMORY<span class="s">/</span></span>
+      <span class="mi">TEMPORAL KNOWLEDGE GRAPH<span class="s">/</span></span>
+      <span class="mi">ENTITY RESOLUTION<span class="s">/</span></span>
+      <span class="mi">STATE SUPERSESSION<span class="s">/</span></span>
+      <span class="mi">3-LANE RETRIEVAL<span class="s">/</span></span>
+      <span class="mi">GITHUB INTEGRATION<span class="s">/</span></span>
+      <span class="mi">JIRA INTEGRATION<span class="s">/</span></span>
+      <span class="mi">SLACK INTEGRATION<span class="s">/</span></span>
+      <span class="mi">CAUSAL TRACING<span class="s">/</span></span>
+      <span class="mi">MCP PROTOCOL<span class="s">/</span></span>
+      <span class="mi">DECISION INTELLIGENCE<span class="s">/</span></span>
+      <span class="mi">LIFESPAN-AWARE SCALING<span class="s">/</span></span>
+      <span class="mi">LANDMARK MEMORY<span class="s">/</span></span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-n t" id="s-events">—</span>
+      <span class="stat-lbl">Events Indexed</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n" id="s-sources">3</span>
+      <span class="stat-lbl">Data Sources</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n g" id="s-queries">0</span>
+      <span class="stat-lbl">Queries Run</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n t">&lt;40ms</span>
+      <span class="stat-lbl">P95 Query Latency</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="ft-l">REEVE / Enterprise Intelligence Console</div>
+    <div class="ft-r">
+      Built on <a href="https://reeve.co.in" target="_blank">Reeve Temporal Knowledge Graph</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============================================================
+    //  CONFIG
+    // ============================================================
+    const API = 'http://localhost:8000';
+    let history = [];
+    let qCount  = 0;
+    let curAns  = '';
+
+    // ============================================================
+    //  CANVAS BACKGROUND — animated knowledge graph
+    // ============================================================
+    (function () {
+      const c = document.getElementById('bg');
+      const x = c.getContext('2d');
+      const TEAL  = '#1A8A87';
+      const GOLD  = '#C9A227';
+      const GRAY  = '#AAAAAA';
+      let nodes   = [];
+
+      function resize() {
+        c.width  = window.innerWidth;
+        c.height = window.innerHeight;
+        spawnNodes();
+      }
+
+      function spawnNodes() {
+        nodes = [];
+        const n = Math.max(18, Math.floor((c.width * c.height) / 14000));
+        for (let i = 0; i < n; i++) {
+          const pick = Math.random();
+          nodes.push({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35,
+            r: Math.random() * 4.5 + 2,
+            col: pick < 0.55 ? TEAL : pick < 0.78 ? GOLD : GRAY,
+          });
+        }
+      }
+
+      function frame() {
+        x.clearRect(0, 0, c.width, c.height);
+        const MAX_DIST = 160;
+
+        // edges
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx   = nodes[i].x - nodes[j].x;
+            const dy   = nodes[i].y - nodes[j].y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < MAX_DIST) {
+              x.beginPath();
+              x.moveTo(nodes[i].x, nodes[i].y);
+              x.lineTo(nodes[j].x, nodes[j].y);
+              x.strokeStyle = `rgba(26,138,135,${0.18 * (1 - dist / MAX_DIST)})`;
+              x.lineWidth   = 0.9;
+              x.stroke();
+            }
+          }
+        }
+
+        // nodes
+        nodes.forEach(n => {
+          // outer glow ring
+          x.beginPath();
+          x.arc(n.x, n.y, n.r + 2, 0, Math.PI * 2);
+          x.strokeStyle = n.col + '33';
+          x.lineWidth   = 1;
+          x.stroke();
+          // fill
+          x.beginPath();
+          x.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          x.fillStyle   = n.col + '55';
+          x.fill();
+          x.strokeStyle = n.col + 'AA';
+          x.lineWidth   = 1;
+          x.stroke();
+          // move
+          n.x += n.vx; n.y += n.vy;
+          if (n.x < 0 || n.x > c.width)  n.vx *= -1;
+          if (n.y < 0 || n.y > c.height) n.vy *= -1;
+        });
+
+        requestAnimationFrame(frame);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      frame();
+    }());
+
+    // ============================================================
+    //  STATUS CHECK
+    // ============================================================
+    async function checkStatus() {
+      try {
+        const r = await fetch(`${API}/status`, { signal: AbortSignal.timeout(4000) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        const s = d.configured_sources || {};
+
+        toggle('d-gh', !!s.github);
+        toggle('d-jr', !!s.jira);
+        toggle('d-sl', !!s.slack);
+
+        setTxt('st-gh', s.github ? 'connected' : 'not configured', s.github);
+        setTxt('st-jr', s.jira   ? 'connected' : 'not configured', s.jira);
+        setTxt('st-sl', s.slack  ? 'connected' : 'not configured', s.slack);
+
+        const cnt = Object.values(s).filter(Boolean).length;
+        document.getElementById('s-sources').textContent = cnt;
+      } catch {
+        toast('Backend not running — start with: python main.py');
+      }
+    }
+
+    function toggle(id, on) {
+      document.getElementById(id).classList.toggle('on', on);
+    }
+    function setTxt(id, txt, ok) {
+      const el = document.getElementById(id);
+      el.textContent = txt;
+      el.classList.toggle('ok', !!ok);
+    }
+
+    // ============================================================
+    //  SYNC / INGEST
+    // ============================================================
+    async function triggerSync() {
+      const btn = document.getElementById('sync-btn');
+      btn.classList.add('busy');
+      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg> SYNCING…`;
+      toast('Syncing all sources…');
+      try {
+        const r = await fetch(`${API}/ingest/all`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        const d = await r.json();
+        const total = d.data?.total_stored ?? d.total_stored ?? '?';
+        document.getElementById('s-events').textContent = total;
+        toast(`Synced — ${total} events indexed`);
+      } catch {
+        toast('Sync failed. Is the server running?');
+      } finally {
+        btn.classList.remove('busy');
+        btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg> SYNC ALL`;
+      }
+    }
+
+    // ============================================================
+    //  QUERY
+    // ============================================================
+    function setQ(q) {
+      document.getElementById('q-input').value = q;
+      document.getElementById('q-input').focus();
+    }
+
+    const loadingPhrases = [
+      'Traversing knowledge graph…',
+      'Resolving entities…',
+      'Retrieving temporal context…',
+      'Fusing evidence lanes…',
+      'Synthesising answer…',
+    ];
+
+    async function submitQuery() {
+      const inp = document.getElementById('q-input');
+      const q   = inp.value.trim();
+      if (!q) return;
+
+      // ui prep
+      const t0 = Date.now();
+      qCount++;
+      document.getElementById('s-queries').textContent = qCount;
+
+      document.getElementById('empty').style.display  = 'none';
+      document.getElementById('r-card').style.display = 'block';
+      document.getElementById('r-q-text').textContent = q;
+      document.getElementById('r-loading').style.display = 'flex';
+      document.getElementById('r-loading').style.flexDirection = 'column';
+      document.getElementById('r-ans').textContent   = '';
+      document.getElementById('r-ms').textContent    = '';
+      document.getElementById('badges').style.display = 'none';
+      document.getElementById('badges').innerHTML    = '';
+
+      // animate loading label
+      let pi = 0;
+      const phInt = setInterval(() => {
+        document.getElementById('l-lbl').textContent = loadingPhrases[pi++ % loadingPhrases.length];
+      }, 900);
+
+      document.getElementById('r-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      try {
+        const res = await fetch(`${API}/investigate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q, include_timeline: true, include_relationships: true })
+        });
+        clearInterval(phInt);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const d = await res.json();
+
+        const ms = Date.now() - t0;
+        document.getElementById('r-ms').textContent = `${ms}ms`;
+        document.getElementById('r-loading').style.display = 'none';
+
+        curAns = d.summary || 'No answer returned.';
+        await typewriter(document.getElementById('r-ans'), curAns);
+
+        // source badges
+        const bads = detectSources(q + ' ' + curAns);
+        if (bads.length) {
+          const el = document.getElementById('badges');
+          el.innerHTML = bads.map(b => `<span class="badge b-${b.key}">${b.ico} ${b.label}</span>`).join('');
+          el.style.display = 'flex';
+        }
+
+        pushHistory(q);
+
+      } catch (e) {
+        clearInterval(phInt);
+        document.getElementById('r-loading').style.display = 'none';
+        document.getElementById('r-ans').textContent = 'Could not reach the backend. Make sure the server is running:\n\n  python main.py';
+        toast('Error: ' + e.message);
+      }
+    }
+
+    function detectSources(text) {
+      const t = text.toLowerCase();
+      const found = [];
+      if (t.includes('github') || t.includes('pull request') || t.includes('pr') || t.includes('commit')) {
+        found.push({ key: 'gh', label: 'GitHub', ico: '⬡' });
+      }
+      if (t.includes('jira') || t.includes('kan') || t.includes('ticket') || t.includes('sprint')) {
+        found.push({ key: 'jr', label: 'Jira', ico: '◆' });
+      }
+      if (t.includes('slack') || t.includes('channel') || t.includes('message') || t.includes('dm')) {
+        found.push({ key: 'sl', label: 'Slack', ico: '◈' });
+      }
+      return found;
+    }
+
+    async function typewriter(el, text) {
+      el.textContent = '';
+      const cur = document.createElement('span');
+      cur.className = 'tcursor';
+      el.appendChild(cur);
+      const delay = text.length > 300 ? 8 : 16;
+      for (let i = 0; i < text.length; i++) {
+        cur.insertAdjacentText('beforebegin', text[i]);
+        if (i % 3 === 0) await sleep(delay);
+      }
+      cur.remove();
+    }
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    function pushHistory(q) {
+      history.unshift(q);
+      if (history.length > 20) history.pop();
+      const list = document.getElementById('hist-list');
+      list.innerHTML = history.map(h =>
+        `<div class="hist-item" onclick="setQ(${JSON.stringify(h)})" title="${h.replace(/"/g,'&quot;')}">${h}</div>`
+      ).join('');
+    }
+
+    function copyAns() {
+      if (!curAns) return;
+      navigator.clipboard.writeText(curAns).then(() => toast('Copied to clipboard'));
+    }
+
+    // ============================================================
+    //  TOAST
+    // ============================================================
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 3600);
+    }
+
+    // ============================================================
+    //  KEYBOARD
+    // ============================================================
+    document.getElementById('q-input').addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        submitQuery();
+      }
+      if (e.key === 'Escape') {
+        e.target.value = '';
+      }
+    });
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    checkStatus();
+  </script>
+</body>
+</html>
