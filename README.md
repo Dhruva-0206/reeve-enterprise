@@ -149,7 +149,7 @@ Which engineer discussions led to this implementation?
 
 # 🏗️ System Architecture
 
-![System Architecture](mermaid.jpeg)
+![System Architecture](flowchart/mermaid.jpeg)
 
 ---
 
