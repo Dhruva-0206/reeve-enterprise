@@ -90,6 +90,15 @@ def slack():
     click.echo(json.dumps(result, indent=2, default=str))
 
 
+@ingest.command()
+def codebase():
+    """Ingest from local codebase"""
+    orchestrator = DataOrchestrator()
+    click.echo("Starting codebase ingestion...")
+    result = orchestrator.ingest_codebase()
+    click.echo(json.dumps(result, indent=2, default=str))
+
+
 # Investigation commands
 @cli.group()
 def investigate():

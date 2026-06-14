@@ -81,8 +81,15 @@ class ReeveMemoryManager:
         Returns structured investigation result with evidence and connections.
         """
         try:
-            # Query Reeve for relevant context
-            answer = query_memory(query, speaker=self.namespace)
+            # Automatically instruct Reeve to cross-reference all available systems
+            enhanced_query = (
+                f"Search across all ingested Jira tickets, GitHub issues, and codebase files to answer the following question. "
+                f"Cross-reference any relevant bugs with the source code implementations. "
+                f"Question: {query}"
+            )
+            
+            # Query Reeve for relevant context using the enhanced prompt
+            answer = query_memory(enhanced_query, speaker=self.namespace)
 
             # Retrieve contextual information
             context = retrieve_memory_context(

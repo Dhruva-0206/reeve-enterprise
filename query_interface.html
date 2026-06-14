@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     /* =============================================
        REEVE DESIGN SYSTEM
@@ -387,8 +388,17 @@
     /* answer */
     .r-ans {
       font-size: 14.5px; line-height: 1.85;
-      color: var(--text); white-space: pre-wrap;
+      color: var(--text);
     }
+    .r-ans p { margin: 0 0 10px 0; }
+    .r-ans pre { background: #1A1A1A; color: #E8E3D9; padding: 12px; border-radius: 4px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+    .r-ans code { background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    .r-ans pre code { background: transparent; padding: 0; border-radius: 0; font-size: inherit; }
+    .r-ans a { color: var(--teal); text-decoration: none; }
+    .r-ans a:hover { text-decoration: underline; }
+    .r-ans ul, .r-ans ol { margin: 0 0 10px 0; padding-left: 20px; }
+    .r-ans h1, .r-ans h2, .r-ans h3, .r-ans h4 { font-family: 'Playfair Display', serif; margin: 20px 0 10px 0; color: var(--dk-teal); }
+    .r-ans h3 { font-size: 16px; }
     .tcursor {
       display: inline-block; width: 2px; height: 15px;
       background: var(--teal); margin-left: 2px;
@@ -525,6 +535,15 @@
           <button class="qa-btn" onclick="setQ('What Jira issues are in progress?')"><span class="qa-ico">◎</span>In-progress tickets</button>
           <button class="qa-btn" onclick="setQ('Show me all state changes tracked')"><span class="qa-ico">◎</span>State changes</button>
           <button class="qa-btn" onclick="setQ('What decisions were made in this project?')"><span class="qa-ico">◎</span>Key decisions</button>
+        </div>
+      </div>
+
+      <div class="sb-div"></div>
+
+      <div class="sb-block">
+        <div class="sb-label">Codebase</div>
+        <div class="qa-list">
+          <button class="qa-btn" onclick="openCodebaseModal()"><span class="qa-ico">◎</span>Browse Files</button>
         </div>
       </div>
 
@@ -668,6 +687,19 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- FILE BROWSER MODAL -->
+  <div id="file-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+    <div style="background:var(--white); width:90%; max-width:800px; max-height:85vh; border:1px solid var(--border); display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.15);">
+      <div style="padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-family:'Playfair Display', serif; font-size:18px; color:var(--text); font-weight:500;" id="file-modal-title">Codebase Files</div>
+        <button onclick="closeCodebaseModal()" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:var(--muted);">&times;</button>
+      </div>
+      <div id="file-modal-body" style="padding:20px; overflow-y:auto; flex:1; font-family:'Inter', sans-serif;">
+        Loading files...
+      </div>
+    </div>
   </div>
 
   <!-- MARQUEE -->
@@ -914,7 +946,7 @@
       document.getElementById('r-q-text').textContent = q;
       document.getElementById('r-loading').style.display = 'flex';
       document.getElementById('r-loading').style.flexDirection = 'column';
-      document.getElementById('r-ans').textContent   = '';
+      document.getElementById('r-ans').innerHTML     = '';
       document.getElementById('r-ms').textContent    = '';
       document.getElementById('badges').style.display = 'none';
       document.getElementById('badges').innerHTML    = '';
@@ -942,7 +974,7 @@
         document.getElementById('r-loading').style.display = 'none';
 
         curAns = d.summary || 'No answer returned.';
-        await typewriter(document.getElementById('r-ans'), curAns);
+        document.getElementById('r-ans').innerHTML = marked.parse(curAns);
 
         // source badges
         const bads = detectSources(q + ' ' + curAns);
@@ -957,7 +989,7 @@
       } catch (e) {
         clearInterval(phInt);
         document.getElementById('r-loading').style.display = 'none';
-        document.getElementById('r-ans').textContent = 'Could not reach the backend. Make sure the server is running:\n\n  python main.py';
+        document.getElementById('r-ans').innerHTML = marked.parse('Could not reach the backend. Make sure the server is running:\n\n```bash\npython main.py\n```');
         toast('Error: ' + e.message);
       }
     }
@@ -1030,6 +1062,58 @@
         e.target.value = '';
       }
     });
+
+    // ============================================================
+    //  CODEBASE FILE BROWSER
+    // ============================================================
+    async function openCodebaseModal() {
+      const modal = document.getElementById('file-modal');
+      const body = document.getElementById('file-modal-body');
+      const title = document.getElementById('file-modal-title');
+      title.textContent = 'Codebase Files';
+      body.innerHTML = 'Loading files...';
+      modal.style.display = 'flex';
+
+      try {
+        const r = await fetch(`${API}/codebase/files`);
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        
+        if (d.files && d.files.length > 0) {
+          body.innerHTML = '<div style="display:grid; gap:8px;">' + d.files.map(f => 
+            `<button onclick="viewFile('${f}')" style="text-align:left; padding:10px; background:rgba(26,138,135,0.04); border:1px solid var(--border); cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--teal); transition:all 0.2s;">
+              📄 ${f}
+            </button>`
+          ).join('') + '</div>';
+        } else {
+          body.innerHTML = '<div style="color:var(--muted);">No files found or codebase not ingested.</div>';
+        }
+      } catch {
+        body.innerHTML = '<div style="color:var(--muted);">Failed to load files. Is the server running?</div>';
+      }
+    }
+
+    async function viewFile(path) {
+      const body = document.getElementById('file-modal-body');
+      const title = document.getElementById('file-modal-title');
+      title.textContent = path;
+      body.innerHTML = 'Loading content...';
+
+      try {
+        const r = await fetch(`${API}/codebase/file/${encodeURIComponent(path)}`);
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        
+        body.innerHTML = `<button onclick="openCodebaseModal()" style="margin-bottom:15px; background:transparent; border:1px solid var(--border); padding:5px 10px; cursor:pointer; font-size:11px; text-transform:uppercase; letter-spacing:0.1em;">← Back to files</button>
+          <pre style="background:#1A1A1A; color:#E8E3D9; padding:15px; overflow-x:auto; font-family:'JetBrains Mono', monospace; font-size:12px; border-radius:4px;">${d.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+      } catch {
+        body.innerHTML = '<div style="color:var(--muted);">Failed to load file contents.</div>';
+      }
+    }
+
+    function closeCodebaseModal() {
+      document.getElementById('file-modal').style.display = 'none';
+    }
 
     // ============================================================
     //  INIT

@@ -123,6 +123,58 @@ async def ingest_slack():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/ingest/codebase")
+async def ingest_codebase():
+    """Ingest local codebase files"""
+    try:
+        result = orchestrator.ingest_codebase()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/codebase/files")
+async def get_codebase_files():
+    """List files from the configured GitHub repository"""
+    from config import github_config
+    from github import Github
+    
+    if not github_config.is_configured or not github_config.repos:
+        raise HTTPException(status_code=400, detail="GitHub not properly configured")
+        
+    try:
+        g = Github(github_config.token)
+        repo_name = github_config.repos[0]
+        repo = g.get_user(github_config.owner).get_repo(repo_name)
+        
+        tree = repo.get_git_tree(repo.default_branch, recursive=True)
+        file_list = [t.path for t in tree.tree if t.type == 'blob']
+        return {"files": sorted(file_list)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/codebase/file/{path:path}")
+async def get_codebase_file(path: str):
+    """Get contents of a file from the configured GitHub repository"""
+    from config import github_config
+    from github import Github
+    
+    if not github_config.is_configured or not github_config.repos:
+        raise HTTPException(status_code=400, detail="GitHub not properly configured")
+        
+    try:
+        g = Github(github_config.token)
+        repo_name = github_config.repos[0]
+        repo = g.get_user(github_config.owner).get_repo(repo_name)
+        
+        file_content = repo.get_contents(path)
+        content = file_content.decoded_content.decode("utf-8")
+        return {"path": path, "content": content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Investigation endpoints
 @app.post("/investigate")
 async def investigate(request: InvestigationRequest):
@@ -296,6 +348,7 @@ async def root():
                 "github": "POST /ingest/github",
                 "jira": "POST /ingest/jira",
                 "slack": "POST /ingest/slack",
+                "codebase": "POST /ingest/codebase",
             },
             "investigation": {
                 "query": "POST /investigate",

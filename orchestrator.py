@@ -7,6 +7,7 @@ from typing import Optional
 from ingester_github import GitHubIngester
 from ingester_jira import JiraIngester
 from ingester_slack import SlackIngester
+from ingester_codebase import CodebaseIngester
 from memory_manager import ReeveMemoryManager
 from models import NormalizedEvent
 from config import validate_configuration
@@ -20,6 +21,7 @@ class DataOrchestrator:
         self.github_ingester: Optional[GitHubIngester] = None
         self.jira_ingester: Optional[JiraIngester] = None
         self.slack_ingester: Optional[SlackIngester] = None
+        self.codebase_ingester: Optional[CodebaseIngester] = None
         self._init_ingesters()
 
     def _init_ingesters(self):
@@ -46,6 +48,12 @@ class DataOrchestrator:
                 print("✓ Slack ingester initialized")
             except Exception as e:
                 print(f"✗ Slack ingester failed: {e}")
+
+        try:
+            self.codebase_ingester = CodebaseIngester()
+            print("✓ Codebase ingester initialized")
+        except Exception as e:
+            print(f"✗ Codebase ingester failed: {e}")
 
     def ingest_all(self, github_repos: Optional[list] = None, jira_projects: Optional[list] = None) -> dict:
         """
@@ -180,6 +188,19 @@ class DataOrchestrator:
         return {
             "status": "success",
             "total_channels": len(channels),
+            "total_events": len(events),
+            "stored": stored,
+        }
+
+    def ingest_codebase(self) -> dict:
+        """Ingest from local codebase only"""
+        if not self.codebase_ingester:
+            return {"status": "error", "message": "Codebase ingester not configured"}
+
+        events = self.codebase_ingester.ingest_files()
+        stored = sum(1 for e in events if self.memory_manager.store_event(e))
+        return {
+            "status": "success",
             "total_events": len(events),
             "stored": stored,
         }
